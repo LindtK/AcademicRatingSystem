@@ -6,10 +6,10 @@ def index(request):
     return render(request, "ratingsys/index.html")
 
 def captureMarks(request):
-    pass
+    return render(request, "ratingsys/capture_marks.html")
 
 def captureDetails(request):
-    pass
+    return render(request, "ratingsys/capture_details.html")
 
 def updateResults(request):
     pass
