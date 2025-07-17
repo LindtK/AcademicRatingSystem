@@ -9,7 +9,7 @@ def captureMarks(request):
     return render(request, "ratingsys/capture_marks.html")
 
 def captureDetails(request):
-    return render(request, "ratingsys/capture_details.html")
+    return render(request, "ratingsys/capture_details.html"  )
 
 def updateResults(request):
     pass
