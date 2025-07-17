@@ -1,12 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home| welcome</title>
-</head>
-<body>
-    <h1>table of students with their  marks</h1>
+{% extends "ratingsys/layout.html" %}
+
     
-</body>
-</html>
+{% block body %}
+  <h1>table of students with their  marks</h1>
+       <table>
+        <tr>
+            <th>Student Number</tuh>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Semester Mark</th>
+            <th>Exam Mark</th>
+            <th>Re-Exam Mark</th>
+            <th>Final Mark</th>
+            <th>status</th>
+        </tr>
+        <!--{% for student in students %}
+        <tr>
+            <td>{{ student.name }}</td>
+            <td>{{ student.course }}</td>
+            <td>{{ student.marks }}</td>
+        </tr>
+        {% endfor %}-->
+    </table>
+    <a href="{% url 'capture_marks' %}">Capture Marks</a>
+    <a href="{% url 'capture_details' %}">Capture Details</a>
+{% endblock %}
+
+
+
+
+
+
+
+
