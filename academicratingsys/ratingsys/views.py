@@ -1,5 +1,12 @@
+from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render
+
+class StudentdetailsForm(forms.Form):
+    pass
+
+class studentMarksForm(forms.Form):
+    pass
 
 # Create your views here.
 def index(request):
