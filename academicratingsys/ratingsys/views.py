@@ -31,3 +31,6 @@ def viewResults(request):
 
 def accessAcademicRecord(request):
     pass
+
+def lectureHomescreen(request):
+    return render(request, "ratingsys/lectureview.html")
