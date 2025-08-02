@@ -1,10 +1,22 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>what the lecturer must see on login</h1>
-</body>
-</html>
+{% extends "ratingsys/layout.html" %}
+
+{% block body %}
+<h1>Overview</h1>
+<h2>welcome back {{lecture.name}} here is an overview of your modules</h2>
+
+{}
+{% if Module %}
+    <ul>
+        {% for module in modules %}
+            <li>{{ module.code }} - {{ module.name }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No modules available.</p>
+{% endif %}
+
+
+{% endblock %}
+
+
+

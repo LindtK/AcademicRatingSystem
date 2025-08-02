@@ -1,0 +1,27 @@
+{% extends "ratingsys/layout.html" %}
+
+{% block body %}
+<h1>Class List</h1> 
+<h2>Welcome back, {{ lecture.name }}! Here is the class list for your module.</h2>
+
+{% if Student %}
+    <ul>
+        {% for student in students %}
+            <li>{{ student.name }} - {{ student.email }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No students enrolled in this module.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block footer %}
+    <p>&copy; 2025 Academic Rating System</p>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // Add any JavaScript you need here
+    </script>
+{% endblock %}
