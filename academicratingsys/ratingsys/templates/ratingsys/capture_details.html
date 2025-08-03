@@ -1,0 +1,14 @@
+{% extends "ratingsys/layout.html" %}
+
+
+{% block body %}
+<h1>Capture student details</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <br>
+    <button type="submit">Submit</button>
+    <a href="{% url 'index' %}">Done</a>
+</form>
+
+{% endblock%}
