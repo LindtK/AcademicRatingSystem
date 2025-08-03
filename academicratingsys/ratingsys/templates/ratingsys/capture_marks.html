@@ -1,11 +1,276 @@
 {% extends "ratingsys/layout.html" %}
+{% load static %}
 
 {% block body %}
-<h1>Capture student marks</h1>
-<form method="post">
-    {% csrf_token %}
-    {{form}}
-    <button type="submit">Submit</button>
-</form>
-<a href="{% url 'index' %}">Done</a>
+<div class="card">
+    <h1><i class="fas fa-edit"></i> Capture Student Marks</h1>
+    
+    <form method="post" class="marks-form">
+        {% csrf_token %}
+        
+        <!-- <div class="form-header">
+            <div class="student-info">
+                <h3>Student Information</h3>
+                <div class="info-grid">
+                    <div>
+                        <strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}
+                    </div>
+                    <div>
+                        <strong>Student #:</strong> {{ student.number }}
+                    </div>
+                    <div>
+                        <strong>Year:</strong> {{ student.year_of_study }}
+                    </div>
+                    <div>
+                        <strong>Qualification:</strong> {{ student.qualification }}
+                    </div>
+                </div>
+            </div>
+             -->
+
+             <div class="student-info-section">
+            <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
+            {% if student %}
+            <div class="student-info-section">
+            <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value">{{ student.first_name }} {{ student.last_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Student #:</span>
+                    <span class="info-value">{{ student.number }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Year:</span>
+                    <span class="info-value">{{ student.year_of_study }}</span>
+                </div>
+            </div>
+        </div>
+            {% else %}
+            <div class="alert alert-warning">
+                No student selected. Please select a student first.
+            </div>
+            {% endif %}
+        </div>
+            <div class="module-selection">
+                <label for="module"><i class="fas fa-book"></i> Select Module:</label>
+                <select id="module" name="module" class="form-control" required>
+                    <option value="">-- Select Module --</option>
+                    <option value="MATH101">MATH101 - Mathematical Analysis I</option>
+                    <option value="MATH102">MATH102 - Mathematical Analysis II</option>
+                    <option value="CS201">CS201 - Database Systems</option>
+                    <option value="CS202">CS202 - Operating Systems</option>
+                    <option value="CS301">CS301 - Artificial Intelligence</option>
+                    <option value="CS302">CS302 - Computer Networks</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- <div class="marks-grid">
+            <div class="form-group">
+                <label for="{{ form.semester_mark.id_for_label }}">
+                    <i class="fas fa-calendar-alt"></i> Semester Mark
+                </label>
+                {{ form.semester_mark }}
+                {{ form.semester_mark.errors }}
+                <small class="form-text">Enter mark between 0-100</small>
+            </div>
+             -->
+
+               <div class="marks-grid">
+            <!-- <div class="form-group">
+                <label for="{{ form.semester_mark.id_for_label }}">
+                    <i class="fas fa-calendar-alt"></i> Semester Mark
+                </label>
+                {{ form.semester_mark }}
+                {{ form.semester_mark.errors }}
+                <small class="form-text">Enter mark between 0-100</small>
+            </div> -->
+
+            <div class="form-group">
+                <label for="id_semester_mark">
+                    <i class="fas fa-calendar-alt"></i> Semester Mark
+                </label>
+                <input type="number" 
+                       id="id_semester_mark" 
+                       name="semester_mark" 
+                       class="form-control"
+                       min="0" 
+                       max="100"
+                       step="0.01"
+                       value="{{ form.semester_mark.value|default:'' }}"
+                       required>
+                {% if form.semester_mark.errors %}
+                <div class="error-message">
+                    {% for error in form.semester_mark.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <small class="form-text">Enter mark between 0-100</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.exam_mark.id_for_label }}">
+                    <i class="fas fa-file-alt"></i> Exam Mark
+                </label>
+                {{ form.exam_mark }}
+                {{ form.exam_mark.errors }}
+                <small class="form-text">Enter mark between 0-100</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.re_exam_mark.id_for_label }}">
+                    <i class="fas fa-redo"></i> Re-Exam Mark
+                </label>
+                {{ form.re_exam_mark }}
+                {{ form.re_exam_mark.errors }}
+                <small class="form-text">(Optional) Enter mark between 0-100</small>
+            </div>
+            
+            <div class="form-group calculated-field">
+                <label>Final Mark</label>
+                <input type="text" id="final_mark" readonly class="form-control">
+                <small class="form-text">Calculated automatically</small>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Marks
+            </button>
+            <a href="{% url 'index' %}" class="btn btn-outline">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+            <button type="button" class="btn btn-secondary" id="calculate-btn">
+                <i class="fas fa-calculator"></i> Calculate Final Mark
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .marks-form {
+        margin-top: 1.5rem;
+    }
+    
+    .form-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .student-info {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+    }
+    
+    .student-info h3 {
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    
+    .module-selection {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+    
+    .marks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .form-group input {
+        width: 100%;
+    }
+    
+    .calculated-field input {
+        background-color: #f0f0f0;
+    }
+    
+    .form-text {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.8rem;
+        color: var(--secondary-text);
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+    
+    .btn-primary {
+        background-color: var(--accent);
+        color: white;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    @media (max-width: 768px) {
+        .form-header {
+            grid-template-columns: 1fr;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Calculate final mark
+        document.getElementById('calculate-btn').addEventListener('click', function() {
+            const examMark = parseFloat(document.getElementById('id_exam_mark').value) || 0;
+            const semesterMark = parseFloat(document.getElementById('id_semester_mark').value) || 0;
+            const reExamMark = parseFloat(document.getElementById('id_re_exam_mark').value) || 0;
+            
+            // Use re-exam mark if provided and higher than exam mark
+            const finalExamMark = reExamMark > examMark ? reExamMark : examMark;
+            
+            // Calculate final mark (40% exam + 60% semester)
+            const finalMark = Math.round((finalExamMark * 0.4) + (semesterMark * 0.6));
+            
+            document.getElementById('final_mark').value = finalMark;
+        });
+    });
+</script>
 {% endblock %}
+
+
+

@@ -1,22 +1,35 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Academic Rating System</title>
+  
+    <link rel="stylesheet" href="{% static 'ratingsys/styles.css' %}">
 </head>
 <body>
-    {% block body%}
-    {% endblock %}
+    <header>
+        <h1>Academic Rating System</h1>
+    </header>
     
-    {% block footer %}
+    <nav>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'capture_marks' %}">Capture Marks</a>
+        <a href="{% url 'capture_details' %}">Capture Details</a>
+        <a href="{% url 'lecturer_view' %}">Lecture Dashboard</a>
+    </nav>
+    
+    <main class="container">
+        {% block body %}
+        {% endblock %}
+    </main>
+    
+    <footer>
         <p>&copy; 2025 Academic Rating System</p>
-    {% endblock %}
+    </footer>
 
     {% block scripts %}
-        <script>
-            // Add any JavaScript you need here
-        </script>
     {% endblock %}
 </body>
 </html>

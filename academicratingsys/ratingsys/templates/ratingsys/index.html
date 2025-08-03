@@ -1,31 +1,187 @@
 {% extends "ratingsys/layout.html" %}
+{% load static %}
 
-    
 {% block body %}
-  <h1>table of students with their  marks</h1>
-       <table>
-        <tr>
-            <th>Student Number</tuh>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Semester Mark</th>
-            <th>Exam Mark</th>
-            <th>Re-Exam Mark</th>
-            <th>Final Mark</th>
-            <th>status</th>
-        </tr>
-        <!--{% for student in students %}
-        <tr>
-            <td>{{ student.name }}</td>
-            <td>{{ student.course }}</td>
-            <td>{{ student.marks }}</td>
-        </tr>
-        {% endfor %}-->
-    </table>
-    <a href="{% url 'capture_marks' %}">Capture Marks</a>
-    <a href="{% url 'capture_details' %}">Capture Details</a>
-{% endblock %}
+<div class="card">
+    <h1>Student Results Overview</h1>
+    
+    <div class="filter-section" style="margin-bottom: 1.5rem;">
+        <form method="get" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div>
+                <label for="year">Year of Study</label>
+                <select id="year" name="year" class="form-control">
+                    <option value="">All Years</option>
+                    <option value="1">First Year</option>
+                    <option value="2">Second Year</option>
+                    <option value="3">Third Year</option>
+                    <option value="3">Fourth Year</option>
+                    <option value="3">Fifth Year</option>
+                </select>
+            </div>
+            <!-- <div>
+                <label for="module">Module</label>
+                <select id="module" name="module" class="form-control">
+                    <option value="">All Modules</option>
+                    {% for module in modules %}
+                    <option value="{{ module.code }}">{{ module.code }} - {{ module.name }}</option>
+                    {% endfor %}
+                </select>
+            </div> -->
 
+            <div>
+    <label for="module">Module</label>
+    <select id="module" name="module" class="form-control">
+        <option value=""></option>
+        <option value="">All Modules</option>
+        <option value="MATH101">MATH101 - Mathematical Analysis I</option>
+        <option value="MATH102">MATH102 - Mathematical Analysis II</option>
+        <option value="CS201">CS201 - Database Systems</option>
+        <option value="CS202">CS202 - Operating Systems</option>
+        <option value="CS301">CS301 - Artificial Intelligence</option>
+        <option value="CS302">CS302 - Computer Networks</option>
+        {% for module in modules %}
+        <option value="{{ module.code }}">{{ module.code }} - {{ module.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+            <div style="display: flex; align-items: flex-end;">
+                <button type="submit" class="btn">Filter Results</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Number</th>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Semester Mark</th>
+                    <th>Exam Mark</th>
+                    <th>Final Mark</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.student.number }}</td>
+                    <td>{{ result.student.first_name }}</td>
+                    <td>{{ result.student.last_name }}</td>
+                    <td>{{ result.semester_mark|default:"-" }}</td>
+                    <td>{{ result.exam_mark|default:"-" }}</td>
+                    <td>{{ result.final_mark|default:"-" }}</td>
+                    <td>
+                        <span class="status-badge status-{{ result.get_rating_display|lower }}">
+                            {{ result.get_rating_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_marks' result.id %}" class="btn btn-sm">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 1.5rem;">
+                        No student records found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination" style="margin-top: 1.5rem;">
+        <span class="step-links">
+            {% if results.has_previous %}
+                <a href="?page=1" class="btn btn-outline">&laquo; first</a>
+                <a href="?page={{ results.previous_page_number }}" class="btn btn-outline">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ results.number }} of {{ results.paginator.num_pages }}
+            </span>
+
+            {% if results.has_next %}
+                <a href="?page={{ results.next_page_number }}" class="btn btn-outline">next</a>
+                <a href="?page={{ results.paginator.num_pages }}" class="btn btn-outline">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'capture_marks' %}" class="btn">
+            <i class="fas fa-plus"></i> Capture New Marks
+        </a>
+        <a href="{% url 'capture_details' %}" class="btn btn-outline">
+            <i class="fas fa-user-plus"></i> Add New Student
+        </a>
+        <a href="{% url 'performance_report' %}" class="btn">
+            <i class="fas fa-chart-bar"></i> Generate Report
+        </a>
+    </div>
+</div>
+
+<style>
+    .filter-section {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 1.5rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .status-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+    
+    .status-pass {
+        background-color: var(--success);
+        color: #2e5a39;
+    }
+    
+    .status-fail {
+        background-color: var(--error);
+        color: #7d2828;
+    }
+    
+    .status-conditional {
+        background-color: var(--highlight);
+        color: #8d7b00;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    @media (max-width: 768px) {
+        .filter-section form {
+            grid-template-columns: 1fr;
+        }
+        
+        .actions-container {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
 
 
 

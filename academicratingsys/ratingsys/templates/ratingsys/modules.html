@@ -1,0 +1,233 @@
+{% extends "ratingsys/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="card">
+    <h1>Module Management System</h1>
+    
+    <div class="card">
+        <h3><i class="fas fa-filter"></i> Filter Modules</h3>
+        <div class="grid-container">
+            <div>
+                <label for="qualification">Qualification</label>
+                <select id="qualification" name="qualification">
+                    <option value="">All Qualifications</option>
+                    <option value="BSC">BSc Mathematical Sciences</option>
+                    <option value="BSCIT">BSc Information Technology</option>
+                    <option value="BSCCS">BSc Computer Science</option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="year">Year of Study</label>
+                <select id="year" name="year">
+                    <option value="">All Years</option>
+                    <option value="1">First Year</option>
+                    <option value="2">Second Year</option>
+                    <option value="3">Third Year</option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="semester">Semester</label>
+                <select id="semester" name="semester">
+                    <option value="">All Semesters</option>
+                    <option value="1">First Semester</option>
+                    <option value="2">Second Semester</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; align-items: flex-end;">
+                <button class="btn" style="width: 100%;">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3><i class="fas fa-list"></i> Module List</h3>
+            <button class="btn" onclick="showModuleForm()"><i class="fas fa-plus"></i> Add Module</button>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Module Code</th>
+                    <th>Module Name</th>
+                    <th>Credits</th>
+                    <th>NQF Level</th>
+                    <th>Semester</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>MATH101</td>
+                    <td>Calculus I</td>
+                    <td>16</td>
+                    <td>5</td>
+                    <td>First</td>
+                    <td><span class="status status-active">Active</span></td>
+                    <td><button class="btn btn-outline" onclick="editModule('MATH101')">Edit</button></td>
+                </tr>
+                <tr>
+                    <td>MATH102</td>
+                    <td>Linear Algebra</td>
+                    <td>16</td>
+                    <td>5</td>
+                    <td>First</td>
+                    <td><span class="status status-active">Active</span></td>
+                    <td><button class="btn btn-outline" onclick="editModule('MATH102')">Edit</button></td>
+                </tr>
+                <tr>
+                    <td>MATH201</td>
+                    <td>Calculus II</td>
+                    <td>16</td>
+                    <td>6</td>
+                    <td>Second</td>
+                    <td><span class="status status-active">Active</span></td>
+                    <td><button class="btn btn-outline" onclick="editModule('MATH201')">Edit</button></td>
+                </tr>
+                <tr>
+                    <td>MATH301</td>
+                    <td>Advanced Calculus</td>
+                    <td>24</td>
+                    <td>7</td>
+                    <td>First</td>
+                    <td><span class="status status-inactive">Inactive</span></td>
+                    <td><button class="btn btn-outline" onclick="editModule('MATH301')">Edit</button></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="pagination">
+            <button class="btn btn-outline">&laquo; Previous</button>
+            <button class="btn">1</button>
+            <button class="btn btn-outline">2</button>
+            <button class="btn btn-outline">3</button>
+            <button class="btn btn-outline">Next &raquo;</button>
+        </div>
+    </div>
+    
+    <div id="moduleForm" class="card" style="display: none;">
+        <h3><i class="fas fa-book"></i> Module Details</h3>
+        <form id="moduleDetailsForm">
+            <div class="grid-container">
+                <div>
+                    <label for="moduleCode">Module Code</label>
+                    <input type="text" id="moduleCode" name="moduleCode" required>
+                </div>
+                <div>
+                    <label for="moduleName">Module Name</label>
+                    <input type="text" id="moduleName" name="moduleName" required>
+                </div>
+                <div>
+                    <label for="moduleCredits">Credits</label>
+                    <input type="number" id="moduleCredits" name="moduleCredits" min="1" max="30" required>
+                </div>
+                <div>
+                    <label for="nqfLevel">NQF Level</label>
+                    <select id="nqfLevel" name="nqfLevel" required>
+                        <option value="">Select Level</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid-container">
+                <div>
+                    <label for="semesterOffered">Semester Offered</label>
+                    <select id="semesterOffered" name="semesterOffered" required>
+                        <option value="">Select Semester</option>
+                        <option value="First">First Semester</option>
+                        <option value="Second">Second Semester</option>
+                        <option value="Both">Both Semesters</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="qualification">Qualification</label>
+                    <select id="qualification" name="qualification" required>
+                        <option value="">Select Qualification</option>
+                        <option value="BSC">BSc Mathematical Sciences</option>
+                        <option value="BSCIT">BSc Information Technology</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="yearOfStudy">Year of Study</label>
+                    <select id="yearOfStudy" name="yearOfStudy" required>
+                        <option value="">Select Year</option>
+                        <option value="1">First Year</option>
+                        <option value="2">Second Year</option>
+                        <option value="3">Third Year</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="status">Status</label>
+                    <select id="status" name="status" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            
+            <label for="moduleDescription">Module Description</label>
+            <textarea id="moduleDescription" name="moduleDescription" required></textarea>
+            
+            <div class="action-buttons">
+                <button type="button" class="btn btn-outline" onclick="hideModuleForm()">Cancel</button>
+                <button type="submit" class="btn">Save Module</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showModuleForm() {
+        document.getElementById('moduleForm').style.display = 'block';
+        // Reset form
+        document.getElementById('moduleDetailsForm').reset();
+        // Scroll to form
+        document.getElementById('moduleForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function hideModuleForm() {
+        document.getElementById('moduleForm').style.display = 'none';
+    }
+
+    function editModule(moduleCode) {
+        // In a real application, this would fetch module data from the server
+        // For demo purposes, we'll just populate with sample data
+        document.getElementById('moduleCode').value = moduleCode;
+        document.getElementById('moduleName').value = moduleCode === 'MATH101' ? 'Calculus I' : 
+                                                     moduleCode === 'MATH102' ? 'Linear Algebra' :
+                                                     moduleCode === 'MATH201' ? 'Calculus II' : 'Advanced Calculus';
+        document.getElementById('moduleCredits').value = moduleCode === 'MATH301' ? '24' : '16';
+        document.getElementById('nqfLevel').value = moduleCode === 'MATH201' ? '6' : 
+                                                   moduleCode === 'MATH301' ? '7' : '5';
+        document.getElementById('semesterOffered').value = moduleCode === 'MATH201' ? 'Second' : 'First';
+        document.getElementById('qualification').value = 'BSC';
+        document.getElementById('yearOfStudy').value = moduleCode === 'MATH101' || moduleCode === 'MATH102' ? '1' :
+                                                       moduleCode === 'MATH201' ? '2' : '3';
+        document.getElementById('status').value = moduleCode === 'MATH301' ? 'Inactive' : 'Active';
+        document.getElementById('moduleDescription').value = 'This is a sample description for ' + 
+            (moduleCode === 'MATH101' ? 'Calculus I' : 
+             moduleCode === 'MATH102' ? 'Linear Algebra' :
+             moduleCode === 'MATH201' ? 'Calculus II' : 'Advanced Calculus') + 
+            '. This module covers fundamental concepts and applications.';
+        
+        showModuleForm();
+    }
+
+    // Handle form submission
+    document.getElementById('moduleDetailsForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Module saved successfully!');
+        hideModuleForm();
+        // In a real application, this would send data to the server
+    });
+</script>
+{% endblock %}

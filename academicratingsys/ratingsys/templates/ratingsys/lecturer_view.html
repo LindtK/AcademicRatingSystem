@@ -1,0 +1,115 @@
+{% extends "ratingsys/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="container">
+    <div class="card">
+        <h2>Lecturer Overview</h2>
+        <p class="subtitle">Welcome back {{ lecturer.name }}, here is an overview of your modules</p>
+        
+        {% if modules %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Module Code</th>
+                        <th>Module Name</th>
+                        <th>Credits</th>
+                        <th>Students Enrolled</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for module in modules %}
+                    <tr>
+                        <td><strong>{{ module.code }}</strong></td>
+                        <td>{{ module.name }}</td>
+                        <td>{{ module.credits }}</td>
+                        <td>
+                            <span class="student-count">{{ module.student_count }}</span>
+                        </td>
+                        <td class="actions">
+                            <a href="{% url 'class_list' class_list.id %}" class="btn btn-sm">
+                                <i class="fas fa-users"></i> Class List
+                            </a>
+                            <a href="{% url 'enter_marks' module.id %}" class="btn btn-sm btn-accent">
+                                <i class="fas fa-edit"></i> Enter Marks
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-book-open" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+            <p>No modules assigned to you.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .subtitle {
+        color: var(--secondary-text);
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .student-count {
+        display: inline-block;
+        min-width: 30px;
+        text-align: center;
+        background-color: var(--primary);
+        color: var(--text);
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+    
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .btn-accent {
+        background-color: var(--accent);
+    }
+    
+    .btn-accent:hover {
+        background-color: #3a6d96;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--secondary-text);
+    }
+    
+    .empty-state i {
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .actions {
+            flex-direction: column;
+        }
+        
+        .btn-sm {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}

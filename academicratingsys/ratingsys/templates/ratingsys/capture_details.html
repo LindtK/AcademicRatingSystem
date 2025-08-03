@@ -1,14 +1,431 @@
 {% extends "ratingsys/layout.html" %}
-
+{% load static %}
 
 {% block body %}
-<h1>Capture student details</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <br>
-    <button type="submit">Submit</button>
-    <a href="{% url 'index' %}">Done</a>
-</form>
+<div class="card full-width-form">
+    <h1><i class="fas fa-user-graduate"></i> Capture Student Details</h1>
+    
+    <form method="post" class="student-form" id="studentForm">
+        {% csrf_token %}
+        <div class="form-grid-wide">
+            <!-- Personal Information -->
+            <div class="form-section-wide">
+                <h3><i class="fas fa-id-card"></i> Personal Information</h3>
+                <div class="form-row">
+                    <div class="form-group-wide">
+                        <label for="{{ form.student_id.id_for_label }}">Student Number</label>
+                        <input type="text" 
+                               id="{{ form.student_id.id_for_label }}" 
+                               name="{{ form.student_id.html_name }}" 
+                               value="{{ form.student_id.value|default:'' }}"
+                               class="form-control-wide"
+                               maxlength="10"
+                               required>
+                        {% if form.student_id.errors %}
+                        <div class="error-message">
+                            {{ form.student_id.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group-wide">
+                        <label for="{{ form.name.id_for_label }}">First Name</label>
+                        <input type="text" 
+                               id="{{ form.name.id_for_label }}" 
+                               name="{{ form.name.html_name }}" 
+                               value="{{ form.name.value|default:'' }}"
+                               class="form-control-wide"
+                               required>
+                        {% if form.name.errors %}
+                        <div class="error-message">
+                            {{ form.name.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group-wide">
+                        <label for="{{ form.surname.id_for_label }}">Last Name</label>
+                        <input type="text" 
+                               id="{{ form.surname.id_for_label }}" 
+                               name="{{ form.surname.html_name }}" 
+                               value="{{ form.surname.value|default:'' }}"
+                               class="form-control-wide"
+                               required>
+                        {% if form.surname.errors %}
+                        <div class="error-message">
+                            {{ form.surname.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group-wide">
+                        <label for="{{ form.email.id_for_label }}">Email Address</label>
+                        <input type="email" 
+                               id="{{ form.email.id_for_label }}" 
+                               name="{{ form.email.html_name }}" 
+                               value="{{ form.email.value|default:'' }}"
+                               class="form-control-wide"
+                               required>
+                        {% if form.email.errors %}
+                        <div class="error-message">
+                            {{ form.email.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-{% endblock%}
+            <!-- Academic Information -->
+            <div class="form-section-wide">
+                <h3><i class="fas fa-book"></i> Academic Information</h3>
+                <div class="form-row">
+                    <div class="form-group-wide">
+                        <label for="{{ form.Qualification_name.id_for_label }}">Qualification</label>
+                        <select id="{{ form.Qualification_name.id_for_label }}" 
+                                name="{{ form.Qualification_name.html_name }}" 
+                                class="form-control-wide"
+                                required>
+                            <option value="">-- Select Qualification --</option>
+                            {% for value, label in form.Qualification_name.field.choices %}
+                            <option value="{{ value }}" {% if form.Qualification_name.value == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.Qualification_name.errors %}
+                        <div class="error-message">
+                            {{ form.Qualification_name.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group-wide">
+                        <label for="{{ form.year_of_study.id_for_label }}">Year of Study</label>
+                        <select id="{{ form.year_of_study.id_for_label }}" 
+                                name="{{ form.year_of_study.html_name }}" 
+                                class="form-control-wide"
+                                required>
+                            <option value="">-- Select Year --</option>
+                            {% for value, label in form.year_of_study.field.choices %}
+                            <option value="{{ value }}" {% if form.year_of_study.value == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.year_of_study.errors %}
+                        <div class="error-message">
+                            {{ form.year_of_study.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module Enrollment -->
+            <div class="form-section-wide module-section">
+                <h3><i class="fas fa-clipboard-list"></i> Module Enrollment</h3>
+                <div class="form-group-wide">
+    <label>Select Modules (Select at least one)</label>
+    <div class="module-checkboxes-wide">
+        {% if available_modules %}
+            {% for module in available_modules %}
+            <div class="checkbox-option-wide">
+                <input type="checkbox" 
+                       id="module_{{ module.id }}" 
+                       name="modules" 
+                       value="{{ module.id }}"
+                       {% if module.id in selected_module_ids %}checked{% endif %}>
+                <label for="module_{{ module.id }}">
+                    <strong>{{ module.code }}</strong> - {{ module.name }}
+                    <span class="module-credits">{{ module.credits }} credits</span>
+                </label>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Hardcoded modules as fallback -->
+            <div class="checkbox-option-wide">
+                <input type="checkbox" id="module_math101" name="modules" value="MATH101">
+                <label for="module_math101">
+                    <strong>MATH101</strong> - Mathematical Analysis I
+                    <span class="module-credits">15 credits</span>
+                </label>
+            </div>
+            <div class="checkbox-option-wide">
+                <input type="checkbox" id="module_math102" name="modules" value="MATH102">
+                <label for="module_math102">
+                    <strong>MATH102</strong> - Mathematical Analysis II
+                    <span class="module-credits">15 credits</span>
+                </label>
+            </div>
+            <div class="checkbox-option-wide">
+                <input type="checkbox" id="module_cs201" name="modules" value="CS201">
+                <label for="module_cs201">
+                    <strong>CS201</strong> - Database Systems
+                    <span class="module-credits">12 credits</span>
+                </label>
+            </div>
+            <div class="checkbox-option-wide">
+                <input type="checkbox" id="module_cs202" name="modules" value="CS202">
+                <label for="module_cs202">
+                    <strong>CS202</strong> - Operating Systems
+                    <span class="module-credits">12 credits</span>
+                </label>
+            </div>
+            <div class="checkbox-option-wide">
+                <input type="checkbox" id="module_cs301" name="modules" value="CS301">
+                <label for="module_cs301">
+                    <strong>CS301</strong> - Artificial Intelligence
+                    <span class="module-credits">15 credits</span>
+                </label>
+            </div>
+            <div class="checkbox-option-wide">
+                <input type="checkbox" id="module_cs302" name="modules" value="CS302">
+                <label for="module_cs302">
+                    <strong>CS302</strong> - Computer Networks
+                    <span class="module-credits">12 credits</span>
+                </label>
+            </div>
+        {% endif %}
+    </div>
+    {% if module_errors %}
+    <div class="error-message">
+        {{ module_errors }}
+    </div>
+    {% endif %}
+</div>
+        <div class="form-actions-wide">
+            <button type="submit" class="btn btn-primary-wide">
+                <i class="fas fa-save"></i> Save Student
+            </button>
+            <a href="{% url 'index' %}" class="btn btn-outline-wide">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .full-width-form {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .student-form {
+        margin-top: 1.5rem;
+    }
+    
+    .form-grid-wide {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .form-section-wide {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 1.5rem;
+        width: 100%;
+    }
+    
+    .form-section-wide h3 {
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group-wide {
+        margin-bottom: 1.2rem;
+        flex: 1;
+        min-width: 250px;
+    }
+    
+    .form-group-wide label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .form-control-wide {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+    
+    .module-section {
+        grid-column: 1 / -1;
+    }
+    
+    .module-checkboxes-wide {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 1rem;
+        background-color: white;
+        border-radius: 4px;
+        border: 1px solid #eee;
+    }
+    
+    .checkbox-option-wide {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 4px;
+        transition: all 0.2s;
+        background-color: #fafafa;
+    }
+    
+    .checkbox-option-wide:hover {
+        background-color: #f0f0f0;
+        transform: translateY(-2px);
+    }
+    
+    .checkbox-option-wide input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+    }
+    
+    .checkbox-option-wide label {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        flex-grow: 1;
+    }
+    
+    .module-credits {
+        font-size: 0.85rem;
+        color: var(--secondary-text);
+        margin-top: 0.25rem;
+    }
+    
+    .form-actions-wide {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eee;
+    }
+    
+    .btn-primary-wide {
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        padding: 0.9rem 2rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .btn-primary-wide:hover {
+        background-color: #1a4a8a;
+    }
+    
+    .btn-outline-wide {
+        background-color: transparent;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 0.9rem 2rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn-outline-wide:hover {
+        background-color: #f0f6ff;
+    }
+    
+    .error-message {
+        color: var(--error);
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background-color: #fef2f2;
+        border-radius: 4px;
+    }
+    
+    @media (max-width: 992px) {
+        .form-row {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-group-wide {
+            min-width: 100%;
+        }
+        
+        .module-checkboxes-wide {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions-wide {
+            flex-direction: column;
+        }
+        
+        .btn-primary-wide, .btn-outline-wide {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+    const form = document.getElementById('studentForm');
+    form.addEventListener('submit', function(e) {
+        // Validate at least one module is selected
+        const moduleCheckboxes = document.querySelectorAll('input[name="modules"]:checked');
+        if (moduleCheckboxes.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one module');
+            const moduleSection = document.querySelector('.module-section');
+            moduleSection.scrollIntoView({ behavior: 'smooth' });
+            return false;
+        }
+        return true;
+    });
+
+    // Auto-capitalize names
+    const nameFields = ['id_name', 'id_surname'];
+    nameFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', function() {
+                this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);
+            });
+        }
+    });
+
+    // Add focus styles to form controls
+    const formControls = document.querySelectorAll('.form-control-wide, .checkbox-option-wide');
+    formControls.forEach(control => {
+        control.addEventListener('focus', function() {
+            this.style.borderColor = 'var(--accent)';
+            this.style.boxShadow = '0 0 0 2px rgba(70, 130, 180, 0.2)';
+        });
+        
+        control.addEventListener('blur', function() {
+            this.style.borderColor = '#ddd';
+            this.style.boxShadow = 'none';
+        });
+    });
+});
+</script>
+{% endblock %}
