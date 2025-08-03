@@ -15,7 +15,6 @@ class Student(models.Model):
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
     email = models.EmailField(max_length=254, unique=True)
-    qualification = models.ForeignKey('Qualification', on_delete=models.CASCADE)
     year_of_study = models.IntegerField()
 
     def __str__(self):
@@ -48,7 +47,7 @@ class modulerating(models.Model):
         return f"{self.rating} - {self.rating_Description}"
 
 class AnnualCode(models.Model):
-    rating = models.ForeignKey(modulerating, on_delete=models.CASCADE)
+    rating = models.CharField(max_length=2, unique=True)
     Annual_code_Description = models.TextField()
 
     def __str__(self):

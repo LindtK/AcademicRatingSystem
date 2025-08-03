@@ -53,8 +53,7 @@ def performanceReport(request):
     pass
 
 def getClassList(request):
-    students = Student.objects.all()
-    return render(request, "ratingsys/class_list.html", {"students": students})
+    return render(request, "ratingsys/class_list.html", {"students": Student.objects.all()})
 
 def accessAcademicRecord(request):
     pass
